@@ -1,43 +1,119 @@
-<img src="https://raw.githubusercontent.com/ammarahm-ed/react-native-actions-sheet/master/assets/graphic.png"/>
+# react-native-actions-sheet-custom-backdrop
 
-<div
-style="width:100%;margin-top:30px;">
-
-<a href="https://github.com/ammarahm-ed/react-native-actions-sheet/pulls"
-target="_blank">
-<img  src="https://img.shields.io/badge/PRs-welcome-green?color=blue&style=flat-square"/>
-</a><a href="https://www.npmjs.com/package/react-native-actions-sheet"
-target="_blank">
-<img src="https://img.shields.io/npm/v/react-native-actions-sheet?color=orange&style=flat-square"/>
-</a><a href="https://www.npmjs.com/package/react-native-actions-sheet" target="_blank">
-<img  src="https://img.shields.io/npm/dt/react-native-actions-sheet?color=darkgreen&style=flat-square"/>
-</a>
-
-</div>
+A fork of [react-native-actions-sheet](https://github.com/ammarahm-ed/react-native-actions-sheet) with support for custom backdrop components (BlurView, gradients, images, etc.).
 
 ## Installation
 
-Check out the [installation](https://rnas.vercel.app/installation) section of our docs for the detailed installation instructions.
+```bash
+npm install react-native-actions-sheet-custom-backdrop
+# or
+yarn add react-native-actions-sheet-custom-backdrop
+```
 
-## Documentation
+### Peer Dependencies
 
-Check out our dedicated documentation page for info about this library, it's features, API reference and more: [https://rnas.vercel.app](https://rnas.vercel.app)
+```bash
+npm install react-native-gesture-handler react-native-reanimated react-native-safe-area-context
+```
 
-## Migrating from v0.9.x
+## Custom Backdrop Usage
 
-The new version of ActionSheet introduces some **breaking changes**. Please read through the [migration guide](https://rnas.vercel.app/guides/migrate) and take the necessary steps.
+This fork adds a `CustomBackdropComponent` prop that allows you to render any custom backdrop instead of the default dark overlay.
 
-## Examples
+### Props
 
-The source code for the example (showcase) app is under the example/ directory. If you want to play with the ActionSheet but don't feel like trying it on a real app, you can run the [example snack](https://snack.expo.dev/@ammarahmed/github.com-ammarahm-ed-react-native-actions-sheet:expo-example).
-## Consider supporting with a ⭐️ [star on GitHub](https://github.com/ammarahm-ed/react-native-actions-sheet/)
+| Prop | Type | Description |
+|------|------|-------------|
+| `CustomBackdropComponent` | `React.ComponentType<CustomBackdropProps>` | Custom component to render as backdrop |
 
-If you are using the library in one of your projects, consider supporting with a star. It takes a lot of time and effort to keep this maintained and address issues and bugs. Thank you.
+### CustomBackdropProps
+
+Your custom backdrop component receives:
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `opacity` | `SharedValue<number>` | Animated opacity value (0 to `defaultOverlayOpacity`, default 0.3) |
+| `onPress` | `() => void` | Handler to call when backdrop is pressed |
+
+### Example: BlurView Backdrop
+
+```tsx
+import ActionSheet, { CustomBackdropProps } from 'react-native-actions-sheet-custom-backdrop';
+import { BlurView } from '@react-native-community/blur';
+import Animated, { useAnimatedStyle } from 'react-native-reanimated';
+import { Pressable, StyleSheet } from 'react-native';
+
+const BlurBackdrop = ({ opacity, onPress }: CustomBackdropProps) => {
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value / 0.3, // normalize 0-0.3 to 0-1
+  }));
+
+  return (
+    <Animated.View style={[StyleSheet.absoluteFill, animatedStyle]}>
+      <BlurView style={StyleSheet.absoluteFill} blurType="dark" blurAmount={10}>
+        <Pressable style={StyleSheet.absoluteFill} onPress={onPress} />
+      </BlurView>
+    </Animated.View>
+  );
+};
+
+// Usage
+<ActionSheet ref={actionSheetRef} CustomBackdropComponent={BlurBackdrop}>
+  <View style={{ padding: 20 }}>
+    <Text>Sheet content here</Text>
+  </View>
+</ActionSheet>
+```
+
+### Example: Gradient Backdrop
+
+```tsx
+import LinearGradient from 'react-native-linear-gradient';
+
+const GradientBackdrop = ({ opacity, onPress }: CustomBackdropProps) => {
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value / 0.3,
+  }));
+
+  return (
+    <Animated.View style={[StyleSheet.absoluteFill, animatedStyle]}>
+      <LinearGradient
+        colors={['transparent', 'rgba(0,0,0,0.8)']}
+        style={StyleSheet.absoluteFill}
+      >
+        <Pressable style={StyleSheet.absoluteFill} onPress={onPress} />
+      </LinearGradient>
+    </Animated.View>
+  );
+};
+```
+
+### Example: Expo Blur
+
+```tsx
+import { BlurView } from 'expo-blur';
+
+const ExpoBlurBackdrop = ({ opacity, onPress }: CustomBackdropProps) => {
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value / 0.3,
+  }));
+
+  return (
+    <Animated.View style={[StyleSheet.absoluteFill, animatedStyle]}>
+      <BlurView intensity={50} style={StyleSheet.absoluteFill}>
+        <Pressable style={StyleSheet.absoluteFill} onPress={onPress} />
+      </BlurView>
+    </Animated.View>
+  );
+};
+```
+
+## Original Documentation
+
+For all other features and API reference, check out the original documentation: [https://rnas.vercel.app](https://rnas.vercel.app)
+
+## Credits
+
+This is a fork of [react-native-actions-sheet](https://github.com/ammarahm-ed/react-native-actions-sheet) by [ammarahm-ed](https://github.com/ammarahm-ed).
 
 ### MIT Licensed
-
-#
-
-<a href="https://notesnook.com" target="_blank">
-<img style="align:center; " src="https://i.imgur.com/EMIqXNc.jpg" href="https://notesnook.com" alt="Notesnook Logo" width="50%" />
-</a>
