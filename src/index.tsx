@@ -1260,20 +1260,27 @@ export default forwardRef<ActionSheetRef, ActionSheetProps>(
                     ]}>
                     <>
                       {!props?.backgroundInteractionEnabled ? (
-                        <AnimatedPressable
-                          onPress={onTouch}
-                          testID={props.testIDs?.backdrop}
-                          style={[
-                            {
-                              height: dimensions.height + insets.top + 100,
-                              width: '100%',
-                              position: 'absolute',
-                              backgroundColor: overlayColor,
-                            },
-                            animatedOpacityStyle,
-                          ]}
-                          {...(props.backdropProps ? props.backdropProps : {})}
-                        />
+                        props.CustomBackdropComponent ? (
+                          <props.CustomBackdropComponent
+                            opacity={opacity}
+                            onPress={onTouch}
+                          />
+                        ) : (
+                          <AnimatedPressable
+                            onPress={onTouch}
+                            testID={props.testIDs?.backdrop}
+                            style={[
+                              {
+                                height: dimensions.height + insets.top + 100,
+                                width: '100%',
+                                position: 'absolute',
+                                backgroundColor: overlayColor,
+                              },
+                              animatedOpacityStyle,
+                            ]}
+                            {...(props.backdropProps ? props.backdropProps : {})}
+                          />
+                        )
                       ) : null}
 
                       {dimensions.height === -1 &&

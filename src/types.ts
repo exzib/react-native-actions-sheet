@@ -7,8 +7,14 @@ import {
   ViewStyle,
 } from 'react-native';
 import {SpringConfig} from 'react-native-reanimated/lib/typescript/animation/springUtils';
+import {SharedValue} from 'react-native-reanimated';
 import EventManager from './eventmanager';
 import {Route} from './hooks/use-router';
+
+export type CustomBackdropProps = {
+  opacity: SharedValue<number>;
+  onPress: () => void;
+};
 
 export interface Sheets {}
 
@@ -381,6 +387,32 @@ export type ActionSheetProps<SheetId extends keyof Sheets = never> = {
    * Additional props to pass to the backdrop element. Useful for adding custom accessibility props.
    */
   backdropProps?: Partial<PressableProps>;
+
+  /**
+   * A custom backdrop component to render instead of the default dark overlay.
+   * Useful for rendering blur views, gradients, or any custom backdrop.
+   *
+   * The component receives:
+   * - `opacity`: A shared value for animated opacity (0 to defaultOverlayOpacity)
+   * - `onPress`: Handler to call when backdrop is pressed (respects closeOnTouchBackdrop)
+   *
+   * Example:
+   * ```tsx
+   * const BlurBackdrop = ({ opacity, onPress }) => {
+   *   const animatedStyle = useAnimatedStyle(() => ({
+   *     opacity: opacity.value / 0.3, // normalize to 0-1
+   *   }));
+   *   return (
+   *     <Animated.View style={[StyleSheet.absoluteFill, animatedStyle]}>
+   *       <BlurView style={StyleSheet.absoluteFill} blurType="dark" blurAmount={10}>
+   *         <Pressable style={StyleSheet.absoluteFill} onPress={onPress} />
+   *       </BlurView>
+   *     </Animated.View>
+   *   );
+   * };
+   * ```
+   */
+  CustomBackdropComponent?: React.ComponentType<CustomBackdropProps>;
 
   /**
    * Default safeArea insets provided through a library such as
